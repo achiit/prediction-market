@@ -157,9 +157,7 @@
 //     { value: '172800', label: '2 days' },
 //     { value: '604800', label: '1 week' },
 //   ];
-//   const anthropic = new Anthropic({
-//     apiKey: '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', // defaults to process.env["ANTHROPIC_API_KEY"]
-//   });
+// 
   
 //   const getAiSuggestions = async (category = 'all') => {
 //     setIsAiLoading(true);
@@ -476,10 +474,8 @@
 //         method: 'POST',
 //         headers: {
 //           'Content-Type': 'application/json',
-//           'Authorization': `Bearer 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`
 //         },
 //         body: JSON.stringify({
-//           model: "gpt-3.5-turbo",
 //           messages: [{
 //             role: "user",
 //             content: `Generate 3 yes/no prediction market questions about current real-world events in ${selectedCategory}. 
