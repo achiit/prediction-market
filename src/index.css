@@ -1,4 +1,4 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -16,4 +16,102 @@
 
 .form-label {
   @apply block text-sm font-medium text-gray-700;
+} */
+
+/* Tailwind base setup */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Reusable button styles */
+.btn {
+  @apply px-4 py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-primary {
+  @apply bg-[#f51454] text-white hover:bg-[#e01348] focus:ring-[#f51454];
+}
+
+.btn-success {
+  @apply bg-green-600 text-white hover:bg-green-700 focus:ring-green-500;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+}
+
+/* Reusable input styles */
+.input-field {
+  @apply mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-[#f51454] focus:ring-[#f51454] sm:text-sm;
+}
+
+.input-field-light {
+  @apply mt-1 block w-full rounded-md border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm;
+}
+
+/* Form label styles */
+.form-label {
+  @apply block text-sm font-medium text-gray-700;
+}
+
+/* Typography classes */
+.heading {
+  @apply text-2xl font-bold text-center text-[#2e0d41] mb-4;
+}
+
+.subheading {
+  @apply text-lg text-center text-gray-500 mb-8;
+}
+
+/* Card styling */
+.card {
+  @apply bg-white rounded-lg shadow-lg p-6 space-y-4;
+}
+
+.card-header {
+  @apply text-lg font-bold text-gray-800;
+}
+
+.card-body {
+  @apply text-sm text-gray-600;
+}
+
+/* Hero section */
+.hero {
+  @apply flex flex-col items-center justify-center text-center bg-gradient-to-b from-[#2e0d41] to-[#430e44] min-h-screen text-white;
+}
+
+.hero-title {
+  @apply text-6xl font-bold mb-6 text-[#f51454];
+}
+
+.hero-subtitle {
+  @apply text-xl mb-8 text-gray-200;
+}
+
+.hero-button {
+  @apply px-8 py-3 rounded-full bg-[#f51454] text-white shadow-lg hover:scale-105 transition-transform;
+}
+
+/* Grid layout */
+.grid {
+  display: grid;
+  gap: 1.5rem; /* Tailwind's `gap-6` equivalent */
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* Tailwind's `md:grid-cols-2` */
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)); /* Tailwind's `lg:grid-cols-3` */
+  }
+}
+
+/* Footer styles */
+.footer {
+  @apply bg-[#2e0d41] text-white py-6 text-center;
 }

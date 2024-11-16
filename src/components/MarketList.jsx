@@ -1,97 +1,101 @@
-// src/components/MarketList.jsx
-import { useState, useEffect } from 'react'
-import { useWeb3 } from '../context/Web3Context'
-import Market from './Market'
+// import { useState, useEffect } from 'react';
+// import { useWeb3 } from '../context/Web3Context';
+// import Market from './Market';
+
+// function MarketList() {
+//   const { contract } = useWeb3();
+//   const [markets, setMarkets] = useState([]);
+//   const [isLoading, setIsLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchMarkets = async () => {
+//       try {
+//         const marketCount = await contract.marketCount();
+//         const marketPromises = [];
+
+//         for (let i = 0; i < marketCount; i++) {
+//           marketPromises.push(contract.getMarketDetails(i));
+//         }
+
+//         const marketData = await Promise.all(marketPromises);
+//         setMarkets(marketData);
+//       } catch (error) {
+//         console.error('Error fetching markets:', error);
+//       } finally {
+//         setIsLoading(false);
+//       }
+//     };
+
+//     fetchMarkets();
+//   }, [contract]);
+
+//   if (isLoading) {
+//     return <div>Loading markets...</div>;
+//   }
+
+//   return (
+//     <div className="space-y-4">
+//       {markets.length === 0 ? (
+//         <p>No markets available.</p>
+//       ) : (
+//         markets.map((market, index) => (
+//           <Market key={index} marketId={index} marketData={market} />
+//         ))
+//       )}
+//     </div>
+//   );
+// }
+
+// export default MarketList;
+import { useState, useEffect } from 'react';
+import { useWeb3 } from '../context/Web3Context';
+import Market from './Market';
+import { motion } from 'framer-motion';
 
 function MarketList() {
-  const { contract } = useWeb3()
-  const [markets, setMarkets] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const { contract } = useWeb3();
+  const [markets, setMarkets] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const loadMarkets = async () => {
-      if (!contract) return
-      
+    const fetchMarkets = async () => {
       try {
-        setIsLoading(true)
-        setError(null)
-
-        const count = await contract.marketCount()
-        const marketPromises = []
-        
-        for (let i = 0; i < count; i++) {
-          marketPromises.push(contract.getMarketDetails(i))
+        if (!contract) return;
+        const marketCount = await contract.marketCount();
+        const marketPromises = [];
+        for (let i = 0; i < marketCount; i++) {
+          marketPromises.push(contract.getMarketDetails(i));
         }
-        
-        const marketData = await Promise.all(marketPromises)
-        setMarkets(marketData)
+        const marketData = await Promise.all(marketPromises);
+        setMarkets(marketData);
       } catch (error) {
-        console.error('Error loading markets:', error)
-        setError('Failed to load markets')
+        console.error('Error fetching markets:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    loadMarkets()
-
-    // Optional: Set up event listener for new markets
-    if (contract) {
-      const filter = contract.filters.MarketCreated()
-      contract.on(filter, () => {
-        loadMarkets()
-      })
-
-      return () => {
-        contract.off(filter)
-      }
-    }
-  }, [contract])
+    fetchMarkets();
+  }, [contract]);
 
   if (isLoading) {
-    return (
-      <div className="text-center py-12">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mx-auto"></div>
-        <p className="mt-4 text-gray-600">Loading markets...</p>
-      </div>
-    )
-  }
-
-  if (error) {
-    return (
-      <div className="text-center py-12 text-red-600">
-        {error}
-      </div>
-    )
+    return <div className="text-center text-lg py-8">Loading markets...</div>;
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-xl font-bold">Active Markets</h2>
-        <span className="text-sm text-gray-500">
-          {markets.length} market{markets.length !== 1 ? 's' : ''}
-        </span>
-      </div>
-
+    <motion.div
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {markets.length === 0 ? (
-        <div className="text-center py-12 bg-white rounded-lg shadow">
-          <p className="text-gray-500">No markets available</p>
-        </div>
+        <p className="text-center text-lg">No markets available yet.</p>
       ) : (
-        <div className="grid gap-4">
-          {markets.map((market, index) => (
-            <Market
-              key={index}
-              marketId={index}
-              marketData={market}
-            />
-          ))}
-        </div>
+        markets.map((market, index) => <Market key={index} marketId={index} marketData={market} />)
       )}
-    </div>
-  )
+    </motion.div>
+  );
 }
 
-export default MarketList
+export default MarketList;

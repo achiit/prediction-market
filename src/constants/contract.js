@@ -1,4 +1,4 @@
-export const CONTRACT_ADDRESS = "0xc3cb1b6fe92ded18a69d285d3f80a1cd8ab920e7"
+export const CONTRACT_ADDRESS = "0xf5d28ca6dc00552c071f31e631d452e66f3ac1bf"
 export const CHAIN_ID = 88882
 export const RPC_URL = "https://chiliz-spicy.publicnode.com"
 
@@ -20,22 +20,12 @@ export const CONTRACT_ABI = [
     },
     {
         "inputs": [],
-        "name": "InvalidTimeframe",
-        "type": "error"
-    },
-    {
-        "inputs": [],
         "name": "MarketAlreadyResolved",
         "type": "error"
     },
     {
         "inputs": [],
         "name": "MarketExpired",
-        "type": "error"
-    },
-    {
-        "inputs": [],
-        "name": "MarketNotExpired",
         "type": "error"
     },
     {
@@ -52,6 +42,25 @@ export const CONTRACT_ABI = [
         "inputs": [],
         "name": "WithdrawFailed",
         "type": "error"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "marketId",
+                "type": "uint256"
+            },
+            {
+                "indexed": false,
+                "internalType": "uint256",
+                "name": "refundAmount",
+                "type": "uint256"
+            }
+        ],
+        "name": "MarketCancelled",
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -135,12 +144,6 @@ export const CONTRACT_ABI = [
                 "internalType": "uint256",
                 "name": "amount",
                 "type": "uint256"
-            },
-            {
-                "indexed": false,
-                "internalType": "uint256",
-                "name": "cost",
-                "type": "uint256"
             }
         ],
         "name": "PositionTaken",
@@ -178,27 +181,11 @@ export const CONTRACT_ABI = [
                 "internalType": "uint256",
                 "name": "marketId",
                 "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            },
-            {
-                "internalType": "bool",
-                "name": "isYes",
-                "type": "bool"
             }
         ],
-        "name": "calculateCost",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
+        "name": "cancelMarket",
+        "outputs": [],
+        "stateMutability": "nonpayable",
         "type": "function"
     },
     {
@@ -209,7 +196,7 @@ export const CONTRACT_ABI = [
                 "type": "uint256"
             }
         ],
-        "name": "claimPosition",
+        "name": "claimPayout",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -229,16 +216,6 @@ export const CONTRACT_ABI = [
             {
                 "internalType": "uint256",
                 "name": "_creatorFee",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_minBet",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "_maxBet",
                 "type": "uint256"
             }
         ],
@@ -268,9 +245,9 @@ export const CONTRACT_ABI = [
                 "type": "uint256"
             },
             {
-                "internalType": "bool",
-                "name": "resolved",
-                "type": "bool"
+                "internalType": "uint256",
+                "name": "totalLiquidity",
+                "type": "uint256"
             },
             {
                 "internalType": "uint256",
@@ -286,59 +263,16 @@ export const CONTRACT_ABI = [
                 "internalType": "address",
                 "name": "creator",
                 "type": "address"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "marketId",
-                "type": "uint256"
-            }
-        ],
-        "name": "getTimeRemaining",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "timeLeft",
-                "type": "uint256"
             },
             {
                 "internalType": "bool",
-                "name": "isExpired",
+                "name": "resolved",
                 "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "marketId",
-                "type": "uint256"
-            }
-        ],
-        "name": "getVoteCounts",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "yesVotes",
-                "type": "uint256"
             },
             {
-                "internalType": "uint256",
-                "name": "noVotes",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "totalVotes",
-                "type": "uint256"
+                "internalType": "bool",
+                "name": "cancelled",
+                "type": "bool"
             }
         ],
         "stateMutability": "view",
@@ -396,83 +330,10 @@ export const CONTRACT_ABI = [
                 "internalType": "bool",
                 "name": "cancelled",
                 "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "marketsInfo",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "yesPool",
-                "type": "uint256"
             },
             {
                 "internalType": "uint256",
-                "name": "noPool",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "creator",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "creatorFee",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "minBet",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "maxBet",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "totalYesVotes",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "totalNoVotes",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "noPositions",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
+                "name": "totalLiquidity",
                 "type": "uint256"
             }
         ],
@@ -513,30 +374,6 @@ export const CONTRACT_ABI = [
         "name": "takePosition",
         "outputs": [],
         "stateMutability": "payable",
-        "type": "function"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            },
-            {
-                "internalType": "address",
-                "name": "",
-                "type": "address"
-            }
-        ],
-        "name": "yesPositions",
-        "outputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
         "type": "function"
     }
 ]
