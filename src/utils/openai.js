@@ -2,6 +2,7 @@
 
 export const OPENAI_API_KEY = 'your-api-key-here'; // Store this securely in environment variables
 export const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+const openaiKey = import.meta.env.VITE_OPENAI_KEY || '';
 
 export const getAiSuggestions = async (category = 'all') => {
   try {
@@ -9,7 +10,7 @@ export const getAiSuggestions = async (category = 'all') => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer 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`
+        'Authorization': `Bearer ${openaiKey}`
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",

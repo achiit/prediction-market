@@ -459,38 +459,6 @@
 //     { id: 'politics', name: 'Politics', icon: '🗳' },
 //   ];
 
-//   const durationOptions = [
-//     { value: '3600', label: '1 hour' },
-//     { value: '7200', label: '2 hours' },
-//     { value: '86400', label: '1 day' },
-//     { value: '172800', label: '2 days' },
-//     { value: '604800', label: '1 week' },
-//   ];
-
-//   const handleGetSuggestions = async () => {
-//     setIsAiLoading(true);
-//     try {
-//       const response = await fetch('https://api.openai.com/v1/chat/completions', {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           messages: [{
-//             role: "user",
-//             content: `Generate 3 yes/no prediction market questions about current real-world events in ${selectedCategory}. 
-//                       Focus on upcoming events that will have clear outcomes within the next week to month. 
-//                       For sports, only include actual scheduled matches or tournaments.
-//                       For crypto, focus on price predictions or major protocol updates.
-//                       For politics, focus on upcoming elections or policy decisions.
-//                       Return only the questions, each on a new line.
-//                       Each question must have a clear yes/no outcome that can be verified.`
-//           }],
-//           temperature: 0.7,
-//           max_tokens: 200
-//         })
-//       });
-
 //       if (!response.ok) throw new Error('Failed to get suggestions');
       
 //       const data = await response.json();
