@@ -11,19 +11,7 @@ export function Web3Provider({ children }) {
   const [contract, setContract] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
-//   const connectWallet = async () => {
-//     console.log('Attempting to connect wallet...')
-//     try {
-//       await switchToChiliz()
-//       const accounts = await window.ethereum.request({
-//         method: 'eth_requestAccounts'
-//       })
-//       console.log('Connected account:', accounts[0])
-//       setAccount(accounts[0])
-//     } catch (error) {
-//       console.error('Error connecting wallet:', error)
-//     }
-//   }
+
 const connectWallet = async () => {
     console.log('Attempting to connect wallet...');
     try {
@@ -43,31 +31,7 @@ const connectWallet = async () => {
       console.error('Error connecting wallet:', error);
     }
   };
-  
-//   useEffect(() => {
-//     if (window.ethereum) {
-//       console.log('Ethereum provider detected.')
-//       const provider = new ethers.providers.Web3Provider(window.ethereum)
-//       setProvider(provider)
 
-//       window.ethereum.on('accountsChanged', (accounts) => {
-//         console.log('Accounts changed:', accounts)
-//         setAccount(accounts[0] || null)
-//       })
-
-//       window.ethereum.on('chainChanged', () => {
-//         console.log('Chain changed. Reloading...')
-//         window.location.reload()
-//       })
-
-//       return () => {
-//         window.ethereum.removeAllListeners()
-//       }
-//     } else {
-//       console.warn('No Ethereum provider detected.')
-//       setIsLoading(false)
-//     }
-//   }, [])
 useEffect(() => {
     if (typeof window.ethereum !== 'undefined') {
       console.log('Ethereum provider detected.');
