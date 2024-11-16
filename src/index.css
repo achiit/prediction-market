@@ -115,3 +115,19 @@
 .footer {
   @apply bg-[#2e0d41] text-white py-6 text-center;
 }
+
+/* Add to your existing index.css */
+body {
+  @apply bg-[#131720] text-white;
+}
+
+/* Update input styles */
+.input-field {
+  @apply mt-1 block w-full rounded-lg bg-[#2a3347] border-gray-700 text-white placeholder-gray-400 
+  focus:border-[#f51454] focus:ring-[#f51454] focus:ring-1;
+}
+
+/* Update button styles */
+.btn-primary {
+  @apply bg-[#f51454] text-white hover:bg-[#d11346] focus:ring-[#f51454] focus:ring-offset-[#131720];
+}

@@ -147,17 +147,27 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3 } from '../context/Web3Context';
+import { Wallet, TrendingUp, Clock, DollarSign } from 'lucide-react';
 
-function Market({ marketId, marketData }) {
+const Market = ({ marketId, marketData }) => {
   const { contract, account } = useWeb3();
   const [betAmount, setBetAmount] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [question, endTime, yesPool, noPool, creator, resolved] = marketData;
 
+  const totalPool = parseFloat(ethers.utils.formatEther(yesPool)) + 
+                   parseFloat(ethers.utils.formatEther(noPool));
+  const yesPercentage = (parseFloat(ethers.utils.formatEther(yesPool)) / totalPool * 100) || 0;
+  const noPercentage = (parseFloat(ethers.utils.formatEther(noPool)) / totalPool * 100) || 0;
+
   const handleBet = async (isYes) => {
-    if (!contract) return;
+    if (!contract || !account) {
+      alert('Please connect your wallet first');
+      return;
+    }
     if (!betAmount || Number(betAmount) <= 0) {
-      alert('Enter a valid bet amount.');
+      alert('Please enter a valid bet amount');
       return;
     }
 
@@ -167,51 +177,97 @@ function Market({ marketId, marketData }) {
         value: ethers.utils.parseEther(betAmount),
       });
       await tx.wait();
-      alert(`Successfully placed ${isYes ? 'Yes' : 'No'} bet.`);
+      alert(`Successfully placed ${isYes ? 'Yes' : 'No'} bet!`);
+      setBetAmount('');
     } catch (error) {
-      console.error(`Error placing ${isYes ? 'Yes' : 'No'} bet:`, error);
-      alert('Failed to place bet.');
+      console.error('Error placing bet:', error);
+      alert('Failed to place bet. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="bg-white text-gray-800 p-6 rounded-lg shadow-lg flex flex-col space-y-4">
-      <h3 className="text-xl font-bold">{question}</h3>
-      <p>
-        <strong>Yes Pool:</strong> {ethers.utils.formatEther(yesPool)} ETH
-      </p>
-      <p>
-        <strong>No Pool:</strong> {ethers.utils.formatEther(noPool)} ETH
-      </p>
-      <div className="space-y-4">
-        <input
-          type="number"
-          className="input-field"
-          placeholder="Enter Bet Amount (ETH)"
-          value={betAmount}
-          onChange={(e) => setBetAmount(e.target.value)}
-        />
-        <div className="flex space-x-4">
-          <button
-            onClick={() => handleBet(true)}
-            disabled={isLoading}
-            className="btn-success w-full"
-          >
-            Bet Yes
-          </button>
-          <button
-            onClick={() => handleBet(false)}
-            disabled={isLoading}
-            className="btn-danger w-full"
-          >
-            Bet No
-          </button>
+    <div className="bg-[#1c2237] rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-2xl border border-gray-800">
+      <div className="p-6">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-white mb-2">{question}</h3>
+            <div className="flex items-center gap-2 text-gray-400 text-sm">
+              <Clock size={16} />
+              <span>Ends {new Date(endTime * 1000).toLocaleDateString()}</span>
+            </div>
+          </div>
         </div>
+
+        <div className="relative h-4 bg-gray-700 rounded-full mb-6">
+          <div
+            className="absolute left-0 h-full bg-green-500 rounded-l-full"
+            style={{ width: `${yesPercentage}%` }}
+          />
+          <div
+            className="absolute right-0 h-full bg-red-500 rounded-r-full"
+            style={{ width: `${noPercentage}%` }}
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-[#2a3347] p-4 rounded-lg">
+            <div className="text-green-500 font-bold mb-1">Yes</div>
+            <div className="text-white text-lg font-bold">{yesPercentage.toFixed(1)}%</div>
+            <div className="text-gray-400 text-sm">
+              {parseFloat(ethers.utils.formatEther(yesPool)).toFixed(3)} ETH
+            </div>
+          </div>
+          <div className="bg-[#2a3347] p-4 rounded-lg">
+            <div className="text-red-500 font-bold mb-1">No</div>
+            <div className="text-white text-lg font-bold">{noPercentage.toFixed(1)}%</div>
+            <div className="text-gray-400 text-sm">
+              {parseFloat(ethers.utils.formatEther(noPool)).toFixed(3)} ETH
+            </div>
+          </div>
+        </div>
+
+        {isExpanded && (
+          <div className="space-y-4 mt-4">
+            <div className="flex items-center gap-2 bg-[#2a3347] p-3 rounded-lg">
+              <DollarSign size={20} className="text-gray-400" />
+              <input
+                type="number"
+                className="w-full bg-transparent border-none text-white placeholder-gray-500 focus:ring-0"
+                placeholder="Enter bet amount (ETH)"
+                value={betAmount}
+                onChange={(e) => setBetAmount(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                onClick={() => handleBet(true)}
+                disabled={isLoading}
+                className="bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg font-medium transition-colors"
+              >
+                Bet Yes
+              </button>
+              <button
+                onClick={() => handleBet(false)}
+                disabled={isLoading}
+                className="bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition-colors"
+              >
+                Bet No
+              </button>
+            </div>
+          </div>
+        )}
+
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full mt-4 py-2 text-gray-400 hover:text-white transition-colors text-sm font-medium"
+        >
+          {isExpanded ? '← Close' : 'Trade →'}
+        </button>
       </div>
     </div>
   );
-}
+};
 
 export default Market;
