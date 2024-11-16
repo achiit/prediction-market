@@ -3,7 +3,7 @@ import { motion, useAnimation } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useWeb3 } from '../context/Web3Context';
 
-export default function Component() {
+export default function Navbar() {
   const { connectWallet, account } = useWeb3();
   const [isOpen, setIsOpen] = useState(false);
   const controls = useAnimation();
@@ -46,14 +46,14 @@ export default function Component() {
                 className="text-2xl font-bold text-[#f51454] typewriter-font"
                 whileHover={{ scale: 1.05 }}
               >
-                🧠 Prediction World
+                🏆 Sports Prediction World
               </motion.span>
             </Link>
           </div>
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to="/markets">Markets</NavLink>
-            <NavLink to="/create">Create Market</NavLink>
-            <NavLink to="/my-markets">My Markets</NavLink>
+            <NavLink to="/markets">Sports Markets</NavLink>
+            <NavLink to="/create">Create Prediction</NavLink>
+            <NavLink to="/my-markets">My Predictions</NavLink>
             {account ? (
               <motion.span
                 className="text-sm bg-[#430e44] px-4 py-2 rounded-full typewriter-font"
@@ -105,9 +105,9 @@ export default function Component() {
         transition={{ duration: 0.3 }}
       >
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <MobileNavLink to="/markets">Markets</MobileNavLink>
-          <MobileNavLink to="/create">Create Market</MobileNavLink>
-          <MobileNavLink to="/my-markets">My Markets</MobileNavLink>
+          <MobileNavLink to="/markets">Sports Markets</MobileNavLink>
+          <MobileNavLink to="/create">Create Prediction</MobileNavLink>
+          <MobileNavLink to="/my-markets">My Predictions</MobileNavLink>
           {account ? (
             <span className="text-sm block px-3 py-2 rounded-md text-white bg-[#430e44] typewriter-font">
               Connected: {account.slice(0, 6)}...{account.slice(-4)}

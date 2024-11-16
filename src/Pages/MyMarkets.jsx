@@ -1,34 +1,28 @@
-import React, { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useWeb3 } from '../context/Web3Context'
-import Market from '../components/Market'
-import { Trophy, Loader, AlertCircle } from 'lucide-react'
+import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useWeb3 } from '../context/Web3Context';
+import Market from '../components/Market';
+import { Trophy, Loader, AlertCircle } from 'lucide-react';
 
 export default function MyMarkets() {
-  const { contract, account } = useWeb3()
-  const [myMarkets, setMyMarkets] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [resolving, setResolving] = useState({})
+  const { contract, account } = useWeb3();
+  const [myMarkets, setMyMarkets] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [resolving, setResolving] = useState({});
+  const [selectedOutcome, setSelectedOutcome] = useState({});
 
   useEffect(() => {
     const fetchMyMarkets = async () => {
-      if (!contract || !account) return
+      if (!contract || !account) return;
 
       try {
-        console.log(`Connected account: ${account}`)
-        const marketCount = await contract.marketCount()
-        console.log(`Total markets: ${marketCount.toString()}`)
-
-        const marketPromises = []
+        const marketCount = await contract.marketCount();
+        const marketPromises = [];
         for (let i = 0; i < marketCount; i++) {
-          marketPromises.push(contract.getMarketDetails(i))
+          marketPromises.push(contract.getMarketDetails(i));
         }
 
-        const marketData = await Promise.all(marketPromises)
-
-        marketData.forEach((market, index) => {
-          console.log(`Market ${index} created by: ${market.creator}`)
-        })
+        const marketData = await Promise.all(marketPromises);
 
         const userMarkets = marketData
           .map((market, index) => ({
@@ -37,50 +31,54 @@ export default function MyMarkets() {
           }))
           .filter(
             (market) => market.data.creator.toLowerCase() === account.toLowerCase()
-          )
+          );
 
-        setMyMarkets(userMarkets)
+        setMyMarkets(userMarkets);
       } catch (error) {
-        console.error('Error fetching user markets:', error)
+        console.error('Error fetching user markets:', error);
       } finally {
-        setIsLoading(false)
+        setIsLoading(false);
       }
-    }
+    };
 
-    fetchMyMarkets()
-  }, [contract, account])
+    fetchMyMarkets();
+  }, [contract, account]);
 
   const handleResolve = async (marketId) => {
-    if (!contract) return
-    setResolving((prev) => ({ ...prev, [marketId]: true }))
+    if (!contract || selectedOutcome[marketId] === undefined) {
+      alert('Please select an outcome before resolving.');
+      return;
+    }
+
+    setResolving((prev) => ({ ...prev, [marketId]: true }));
 
     try {
-      const tx = await contract.resolveMarket(marketId, true)
-      await tx.wait()
-      alert('Market resolved successfully!')
+      const tx = await contract.resolveMarket(marketId, selectedOutcome[marketId]);
+      await tx.wait();
+      alert('Market resolved successfully!');
     } catch (error) {
-      console.error('Error resolving market:', error)
-      alert('Failed to resolve the market. Check console for details.')
+      console.error('Error resolving market:', error);
+      alert('Failed to resolve the market. Check console for details.');
     } finally {
-      setResolving((prev) => ({ ...prev, [marketId]: false }))
+      setResolving((prev) => ({ ...prev, [marketId]: false }));
     }
-  }
+  };
 
   const isMarketResolvable = (market) => {
-    const now = Math.floor(Date.now() / 1000)
-    return now >= market.data.endTime && !market.data.resolved && !market.data.cancelled
-  }
+    const now = Math.floor(Date.now() / 1000);
+    return now >= market.data.endTime && !market.data.resolved && !market.data.cancelled;
+  };
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#1a0b2e] to-[#2e0d41]">
         <motion.div
           animate={{ rotate: 360 }}
-          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+          transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
           className="w-16 h-16 border-t-4 border-[#f51454] border-solid rounded-full"
         />
       </div>
-    )
+    );
   }
 
   return (
@@ -109,9 +107,7 @@ export default function MyMarkets() {
             className="text-center p-8 bg-[#2a1c3d] rounded-xl shadow-lg border border-[#f51454]"
           >
             <AlertCircle size={48} className="text-[#f51454] mx-auto mb-4" />
-            <p className="text-xl text-gray-300">
-              You have not created any markets yet.
-            </p>
+            <p className="text-xl text-gray-300">You have not created any markets yet.</p>
           </motion.div>
         ) : (
           <motion.div
@@ -130,27 +126,56 @@ export default function MyMarkets() {
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                   className="bg-gradient-to-br from-[#2e0d41] to-[#1a0b2e] rounded-xl shadow-lg border border-[#f51454] p-6 relative overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 w-20 h-20 bg-[#f51454] transform rotate-45 translate-x-8 -translate-y-8" />
                   <Market marketId={marketId} marketData={data} />
                   {isMarketResolvable({ marketId, data }) && (
-                    <motion.button
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => handleResolve(marketId)}
-                      disabled={resolving[marketId]}
-                      className="w-full mt-4 bg-gradient-to-r from-[#f51454] to-[#ff8f00] text-white py-3 rounded-lg font-medium text-lg
-                        hover:from-[#e01348] hover:to-[#f08200] disabled:opacity-50 disabled:cursor-not-allowed
-                        transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
-                    >
-                      {resolving[marketId] ? (
-                        <span className="flex items-center justify-center">
-                          <Loader className="animate-spin mr-2" size={20} />
-                          Resolving...
-                        </span>
-                      ) : (
-                        'Resolve Market'
-                      )}
-                    </motion.button>
+                    <div className="mt-4">
+                      <div className="flex items-center gap-4 mb-4">
+                        <label className="flex items-center gap-2 text-white">
+                          <input
+                            type="radio"
+                            name={`outcome-${marketId}`}
+                            value="true"
+                            checked={selectedOutcome[marketId] === true}
+                            onChange={() =>
+                              setSelectedOutcome((prev) => ({ ...prev, [marketId]: true }))
+                            }
+                            className="form-radio text-[#f51454]"
+                          />
+                          Yes
+                        </label>
+                        <label className="flex items-center gap-2 text-white">
+                          <input
+                            type="radio"
+                            name={`outcome-${marketId}`}
+                            value="false"
+                            checked={selectedOutcome[marketId] === false}
+                            onChange={() =>
+                              setSelectedOutcome((prev) => ({ ...prev, [marketId]: false }))
+                            }
+                            className="form-radio text-[#f51454]"
+                          />
+                          No
+                        </label>
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleResolve(marketId)}
+                        disabled={resolving[marketId]}
+                        className="w-full bg-gradient-to-r from-[#f51454] to-[#ff8f00] text-white py-3 rounded-lg font-medium text-lg
+                          hover:from-[#e01348] hover:to-[#f08200] disabled:opacity-50 disabled:cursor-not-allowed
+                          transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg"
+                      >
+                        {resolving[marketId] ? (
+                          <span className="flex items-center justify-center">
+                            <Loader className="animate-spin mr-2" size={20} />
+                            Resolving...
+                          </span>
+                        ) : (
+                          'Resolve Market'
+                        )}
+                      </motion.button>
+                    </div>
                   )}
                 </motion.div>
               ))}
@@ -159,5 +184,5 @@ export default function MyMarkets() {
         )}
       </motion.div>
     </div>
-  )
+  );
 }
