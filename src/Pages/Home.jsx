@@ -33,10 +33,27 @@
 
 // export default Home;
 
+import { motion } from 'framer-motion';
 import Hero from '../components/Hero';
 
-function Home() {
-  return <Hero />;
+export default function Component() {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-gradient-to-br from-[#2e0d41] via-[#430e44] to-[#2e0d41]"
+    >
+      <Hero />
+      <motion.div
+        className="max-w-7xl mx-auto px-4 py-12"
+        initial={{ y: 50, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.8 }}
+      >
+        <h2 className="text-3xl font-bold text-center text-[#f51454] mb-8 typewriter-font">Featured Markets</h2>
+        {/* Add your featured markets content here */}
+      </motion.div>
+    </motion.div>
+  );
 }
-
-export default Home;

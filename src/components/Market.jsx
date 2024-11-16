@@ -371,6 +371,7 @@
 import React, { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3 } from '../context/Web3Context';
+import { motion } from 'framer-motion';
 
 function Market({ marketId, marketData }) {
   const { contract, account } = useWeb3();
@@ -390,10 +391,8 @@ function Market({ marketId, marketData }) {
     cancelled,
   } = marketData;
 
-  // Helper to format values from Wei to CHZ
   const formatToCHZ = (weiValue) => `${ethers.utils.formatEther(weiValue)} CHZ`;
 
-  // Calculate time left
   useEffect(() => {
     const updateTimeLeft = () => {
       const now = Math.floor(Date.now() / 1000);
@@ -414,7 +413,6 @@ function Market({ marketId, marketData }) {
     return () => clearInterval(interval);
   }, [endTime]);
 
-  // Function to place a bet
   const placeBet = async (isYes) => {
     if (!betAmount || Number(betAmount) <= 0) {
       alert('Enter a valid bet amount');
@@ -436,7 +434,6 @@ function Market({ marketId, marketData }) {
     }
   };
 
-  // Function to claim points
   const claimPoints = async () => {
     try {
       setIsClaiming(true);
@@ -454,16 +451,22 @@ function Market({ marketId, marketData }) {
   const isMarketActive = !resolved && !cancelled && timeLeft !== 'Market Closed';
 
   return (
-    <div className="p-6 bg-[#1c2237] rounded-lg shadow-lg border border-gray-700">
-      <h3 className="text-xl font-bold text-white mb-2">{question}</h3>
-      <p className="text-gray-400 mb-2">End Time: {new Date(endTime * 1000).toLocaleString()}</p>
-      <p className="text-gray-400 mb-2">Liquidity: {formatToCHZ(totalLiquidity)}</p>
+    <motion.div
+      className="p-6 bg-gradient-to-br from-[#2e0d41] to-[#430e44] rounded-lg shadow-lg border border-[#f51454] overflow-hidden relative"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="absolute top-0 right-0 w-20 h-20 bg-[#f51454] transform rotate-45 translate-x-8 -translate-y-8"></div>
+      <h3 className="text-xl font-bold text-[#f51454] mb-2 typewriter-font">{question}</h3>
+      <p className="text-gray-300 mb-2 typewriter-font">End Time: {new Date(endTime * 1000).toLocaleString()}</p>
+      <p className="text-gray-300 mb-2 typewriter-font">Liquidity: {formatToCHZ(totalLiquidity)}</p>
       <div className="flex justify-between mb-4">
-        <div className="text-green-400">Yes: {formatToCHZ(yesPool)}</div>
-        <div className="text-red-400">No: {formatToCHZ(noPool)}</div>
+        <div className="text-green-400 typewriter-font">Yes: {formatToCHZ(yesPool)}</div>
+        <div className="text-red-400 typewriter-font">No: {formatToCHZ(noPool)}</div>
       </div>
 
-      <p className="text-sm text-gray-400 mb-4">Time Left: {timeLeft}</p>
+      <p className="text-sm text-[#f51454] mb-4 typewriter-font">Time Left: {timeLeft}</p>
 
       {isMarketActive && (
         <div>
@@ -472,40 +475,46 @@ function Market({ marketId, marketData }) {
             placeholder="Enter bet amount (CHZ)"
             value={betAmount}
             onChange={(e) => setBetAmount(e.target.value)}
-            className="input-field"
+            className="w-full p-2 mb-4 bg-[#1c2237] border border-[#f51454] rounded text-white typewriter-font focus:outline-none focus:ring-2 focus:ring-[#f51454]"
           />
           <div className="flex gap-4 mt-4">
-            <button
+            <motion.button
               onClick={() => placeBet(true)}
-              className="btn-primary"
+              className="flex-1 py-2 px-4 bg-green-500 text-white rounded typewriter-font transition-colors duration-300 hover:bg-green-600"
               disabled={isLoading}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Bet Yes
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={() => placeBet(false)}
-              className="btn-primary"
+              className="flex-1 py-2 px-4 bg-red-500 text-white rounded typewriter-font transition-colors duration-300 hover:bg-red-600"
               disabled={isLoading}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
             >
               Bet No
-            </button>
+            </motion.button>
           </div>
         </div>
       )}
 
       {!isMarketActive && resolved && (
-        <button
+        <motion.button
           onClick={claimPoints}
-          className="btn-primary mt-4"
+          className="w-full mt-4 py-2 px-4 bg-[#f51454] text-white rounded typewriter-font transition-colors duration-300 hover:bg-[#d01346]"
           disabled={isClaiming}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
         >
           {isClaiming ? 'Claiming...' : 'Claim Payout'}
-        </button>
+        </motion.button>
       )}
 
-      {resolved && <p className="text-green-400 mt-4">Market Resolved</p>}
-      {cancelled && <p className="text-red-400 mt-4">Market Cancelled</p>}
-    </div>
+      {resolved && <p className="text-green-400 mt-4 typewriter-font">Market Resolved</p>}
+      {cancelled && <p className="text-red-400 mt-4 typewriter-font">Market Cancelled</p>}
+    </motion.div>
   );
 }
 
