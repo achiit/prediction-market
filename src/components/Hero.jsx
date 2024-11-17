@@ -58,7 +58,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5, duration: 1 }}
         >
-          Predict sports outcomes, place your bets, and win big rewards.
+          Predict sports outcomes, place your bets, and win big rewards. Be the underdog!
         </motion.p>
         <motion.a
           href="/markets"
