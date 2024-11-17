@@ -79,6 +79,7 @@ import Footer from './components/Footer';
 import Home from './Pages/Home';
 import Markets from './Pages/Markets';
 import Create from './Pages/Create';
+import MyMarkets from './Pages/MyMarkets';
 
 function App() {
   return (
@@ -89,6 +90,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/markets" element={<Markets />} />
           <Route path="/create" element={<Create />} />
+            <Route path="/my-markets" element={<MyMarkets />} />
         </Routes>
       </main>
       <Footer />
